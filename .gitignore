@@ -18,3 +18,10 @@ Assets/MMD/
 /CharWebCam.csproj
 /CharWebCam.Editor.csproj
 /CharWebCam.sln
+
+# OSX
+.DS_Store
+
+# face landmark derector model file
+Assets/shape_predictor_68_face_landmarks.dat
+Assets/shape_predictor_68_face_landmarks.dat.meta
