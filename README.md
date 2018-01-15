@@ -9,7 +9,7 @@ fork元のプロジェクトについて，所有しているMacBookProにある
 © Unity Technologies Japan/UCL
 
 ## 免責
-ご利用計画的に(自己責任での意です)．
+ご利用は計画的に(自己責任での意です)．
 masterブランチ(fork元)READMEも良く御覧ください．
 
 ## 以下編集中
