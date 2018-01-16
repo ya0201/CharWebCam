@@ -25,3 +25,9 @@ Assets/MMD/
 # face landmark derector model file
 Assets/shape_predictor_68_face_landmarks.dat
 Assets/shape_predictor_68_face_landmarks.dat.meta
+
+# test script
+Assets/PluginTest.cs
+Assets/PluginTest.cs.meta
+Assets/MySmootherTest.cs
+Assets/MySmootherTest.cs.meta

@@ -55,9 +55,12 @@
      <Compile Include="Assets\CharWebCam\Hide.cs" />
      <Compile Include="Assets\CharWebCam\MM_UnityChan.cs" />
      <Compile Include="Assets\CharWebCam\MouthMove.cs" />
-     <Compile Include="Assets\CharWebCam\OCDV.cs" />
+     <Compile Include="Assets\CharWebCam\OCVD.cs" />
+     <Compile Include="Assets\CharWebCam\OCVD_UnityChan.cs" />
      <Compile Include="Assets\CharWebCam\RealSense.cs" />
      <Compile Include="Assets\CharWebCam\RS_UnityChan.cs" />
+     <Compile Include="Assets\MySmootherTest.cs" />
+     <Compile Include="Assets\PluginTest.cs" />
      <Compile Include="Assets\UnityChan\Scripts\SpringBone.cs" />
      <Compile Include="Assets\UnityChan\Scripts\SpringCollider.cs" />
      <Compile Include="Assets\UnityChan\Scripts\SpringManager.cs" />
