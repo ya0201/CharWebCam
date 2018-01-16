@@ -25,6 +25,8 @@ public class OCVD_UnityChan : OCVD
         // 各パラメータ表示
         UpdateParamText();
 
+		// yが-1.4~-1.2にあると都合が良さそう
+		// zが0.4~0.6にあると都合が良さそう
         // 体移動
         Body.transform.position = BodyPos;
 

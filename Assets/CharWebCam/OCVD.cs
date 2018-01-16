@@ -48,8 +48,8 @@ public class OCVD : MonoBehaviour {
 	protected const int IMAGE_HEIGHT = 480;
 
 	// smoother
-	protected const float ALPHA = 0.3f;
-	protected const float GAMMA = 0.5f;
+	protected const float ALPHA = 0.4f;
+	protected const float GAMMA = 0.7f;
 	IntPtr body_smoother_;	//3D
 	IntPtr head_smoother_;	//3D
 //	Smoother2D SmoothEyes = null;
@@ -81,6 +81,9 @@ public class OCVD : MonoBehaviour {
 	protected float BodyPosX = 3;
 	protected float BodyPosY = 3;
 	protected float BodyPosZ = 500;
+//	protected float BodyPosX = 0.01f;
+//	protected float BodyPosY = -1.3f;
+//	protected float BodyPosZ = 0.5f;
 	protected float BodyPosYOffset;
 	protected int BodyPosSmoothWeight = 20;
 	protected float HeadAngX = 70;
@@ -105,7 +108,7 @@ public class OCVD : MonoBehaviour {
 			detected_parts_matrix_[i,0] = detected_parts_matrix_[i,1] = 0;
 		}
 
-		BodyPos = new Vector3 (BodyPosX, BodyPosY, BodyPosZ);
+		BodyPos = new Vector3 (0, -1.3f, 0.5f);
 
 		body_smoother_ = getSmoother3D(ALPHA, GAMMA);
 		head_smoother_ = getSmoother3D(ALPHA, GAMMA);
@@ -120,7 +123,9 @@ public class OCVD : MonoBehaviour {
 //		Debug.Log (str);
 
 		// 体位置
-		BodyPos = smooth3D(body_smoother_, GetBodyPos(face_rect_));
+		BodyPos = ClipBodyPos(smooth3D(body_smoother_, GetBodyPos(face_rect_)));
+//		BodyPos = smooth3D(body_smoother_, GetBodyPos(face_rect_));
+		Debug.Log ("BodyPos: " + BodyPos);
 
 		// 頭角度
 		HeadAng = smooth3D(head_smoother_, GetHeadAng(detected_parts_matrix_));
@@ -212,6 +217,20 @@ public class OCVD : MonoBehaviour {
 
 		// 顔の大きさと中心から初期位置分ずらして体位置に利用
 		return new Vector3(-xPos, yPos, zPos);
+//		return new Vector3(-xPos, -1.3f, zPos);
+	}
+
+	/// <summary>
+	/// 体位置をある範囲にクリッピング
+	/// </summary>
+	/// <param name="BodyPos">体位置</param>
+	/// <returns>体位置</returns>
+	Vector3 ClipBodyPos(Vector3 BodyPos)
+	{
+//		float clipped_y = BodyPos.y > -1.2f ? -1.2f : BodyPos.y < -1.4f ? -1.4f : BodyPos.y;
+//		float clipped_z = BodyPos.z > 0.6f ? 0.6f : BodyPos.z < 0.4f ? 0.4f : BodyPos.z;
+//		return new Vector3(BodyPos.x, clipped_y, clipped_z);
+		return new Vector3(BodyPos.x, -1.3f, 0.5f);
 	}
 
 	/// <summary>
