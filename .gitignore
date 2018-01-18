@@ -31,3 +31,6 @@ Assets/PluginTest.cs
 Assets/PluginTest.cs.meta
 Assets/MySmootherTest.cs
 Assets/MySmootherTest.cs.meta
+
+# Binary
+Build/*

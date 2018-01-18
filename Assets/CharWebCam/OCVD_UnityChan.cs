@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Threading;
+using System.Collections.Concurrent;
 
 public class OCVD_UnityChan : OCVD
 {
@@ -11,16 +13,26 @@ public class OCVD_UnityChan : OCVD
     public SkinnedMeshRenderer EL_DEF;
     public SkinnedMeshRenderer MTH_DEF;
 
+	private Thread detect_thread_;
+	private BlockingCollection<int[]> detected_face_queue_;
+	private BlockingCollection<int[,]> detected_parts_queue_;
+
     void Start()
     {
         BodyPosYOffset = Body.transform.position.y;
-
         Init();
+
+		detected_face_queue_ = new BlockingCollection<int[]>();
+		detected_parts_queue_ = new BlockingCollection<int[,]>();
+
+		detect_thread_ = new Thread(doDetect);
+		detect_thread_.Start();
     }
 
     void Update()
     {
-		UpdateParam();
+		UpdateParam(detected_face_queue_.Take(), detected_parts_queue_.Take());
+		Debug.Log (detected_parts_queue_.ToString());
 
         // 各パラメータ表示
         UpdateParamText();
@@ -79,4 +91,31 @@ public class OCVD_UnityChan : OCVD
 //            MTH_DEF.SetBlendShapeWeight(3, 0);
 //        }
     }
+
+	private void doDetect()
+	{
+		while (!detected_face_queue_.IsAddingCompleted && !detected_parts_queue_.IsAddingCompleted) {
+			int[] detected_face = new int[4];
+			int[,] detected_parts = new int[NUM_OF_PARTS, 2];
+			for (int i=0; i<NUM_OF_PARTS; i++) {
+				detected_parts[i,0] = detected_parts[i,1] = 0;
+			}
+			detect (cap_, dapm_, detected_face, detected_parts);
+			detected_face_queue_.Add (detected_face);
+			detected_parts_queue_.Add (detected_parts);
+		}
+	}
+
+	protected override void OnDestroy() {
+		if (detect_thread_ != null) {
+			detected_face_queue_.CompleteAdding();
+			detected_parts_queue_.CompleteAdding();
+			detect_thread_.Join();
+
+			detected_face_queue_.Dispose ();
+			detected_parts_queue_.Dispose ();
+			detect_thread_ = null;
+		}
+		base.OnDestroy ();
+	}
 }

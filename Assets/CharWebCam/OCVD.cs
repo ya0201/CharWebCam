@@ -6,7 +6,37 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 public class OCVD : MonoBehaviour {
-	
+
+//	#if UNITY_IOS
+//	[DllImport ("MyUnityPluginForIOS")]
+//	private static extern IntPtr getVideoDevice(); 
+//	[DllImport ("MyUnityPluginForIOS")]
+//	private static extern void releaseVideoDevice(IntPtr cap); 
+//	[DllImport ("MyUnityPluginForIOS")]
+//	private static extern IntPtr getDetectorAndPoseModel(string model_dat_path);
+//	[DllImport ("MyUnityPluginForIOS")]
+//	protected static extern void detect(IntPtr cap, IntPtr dapm, int[] face_rect, int[,] matrix);
+//
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern IntPtr getSmoother1D(float alpha, float gamma);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern IntPtr getSmoother2D(float alpha, float gamma);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern IntPtr getSmoother3D(float alpha, float gamma);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern void deleteSmoother1D(IntPtr smoother);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern void deleteSmoother2D(IntPtr smoother);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern void deleteSmoother3D(IntPtr smoother);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern float smooth1D(IntPtr smoother, float f);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern Vector2 smooth2D(IntPtr smoother, Vector2 p);
+//	[DllImport ("MySmootherForIOS")]
+//	protected static extern Vector3 smooth3D(IntPtr smoother, Vector3 p);
+//	#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX // OSX
+
 	[DllImport ("MyUnityPlugin")]
 	protected static extern IntPtr getVideoDevice(); 
 	[DllImport ("MyUnityPlugin")]
@@ -34,22 +64,26 @@ public class OCVD : MonoBehaviour {
 	protected static extern Vector2 smooth2D(IntPtr smoother, Vector2 p);
 	[DllImport ("MySmoother")]
 	protected static extern Vector3 smooth3D(IntPtr smoother, Vector3 p);
+//	#endif
 
 
 
 	protected IntPtr cap_;
 	protected IntPtr dapm_;
-	protected int frame_ctr_;
+//	protected int frame_ctr_;
 	protected string MODEL_DAT_PATH = "/Users/Shared/Unity/CharWebCam/Assets/shape_predictor_68_face_landmarks.dat";
 	protected const int NUM_OF_PARTS = 68;
 	protected int[] face_rect_ = new int[4];
 	protected int[,] detected_parts_matrix_ = new int[NUM_OF_PARTS,2];
 	protected const int IMAGE_WIDTH = 720;
 	protected const int IMAGE_HEIGHT = 480;
+	protected const float BPX_INIT = 0;
+	protected const float BPY_INIT = -1.3f;
+	protected const float BPZ_INIT = 0.5f;
 
 	// smoother
-	protected const float ALPHA = 0.4f;
-	protected const float GAMMA = 0.7f;
+	protected const float ALPHA = 0.5f;
+	protected const float GAMMA = 0.79f;
 	IntPtr body_smoother_;	//3D
 	IntPtr head_smoother_;	//3D
 //	Smoother2D SmoothEyes = null;
@@ -81,14 +115,11 @@ public class OCVD : MonoBehaviour {
 	protected float BodyPosX = 3;
 	protected float BodyPosY = 3;
 	protected float BodyPosZ = 500;
-//	protected float BodyPosX = 0.01f;
-//	protected float BodyPosY = -1.3f;
-//	protected float BodyPosZ = 0.5f;
 	protected float BodyPosYOffset;
 	protected int BodyPosSmoothWeight = 20;
 	protected float HeadAngX = 70;
 	protected float HeadAngY = 90;
-	protected float HeadAngZ = 300;
+	protected float HeadAngZ = 200;
 	protected int HeadAngSmoothWeight = 20;
 	protected float EyesPosX = 0.8f;
 	protected float EyesPosY = 0.2f;
@@ -96,49 +127,51 @@ public class OCVD : MonoBehaviour {
 	protected int EyesCloseSmoothWeight = 3;
 	protected int FaceSmoothWeight = 10;
 
-	// 検出値取得
-	protected bool Ready = false;
-
 
 	protected void Init () {
 		cap_ = getVideoDevice ();
 		dapm_ = getDetectorAndPoseModel (MODEL_DAT_PATH);
-		frame_ctr_ = 0;
+//		frame_ctr_ = 0;
 		for (int i=0; i<NUM_OF_PARTS; i++) {
 			detected_parts_matrix_[i,0] = detected_parts_matrix_[i,1] = 0;
 		}
 
-		BodyPos = new Vector3 (0, -1.3f, 0.5f);
-
 		body_smoother_ = getSmoother3D(ALPHA, GAMMA);
-		head_smoother_ = getSmoother3D(ALPHA, GAMMA);
+		BodyPos = smooth3D (body_smoother_, new Vector3 (BPX_INIT, BPY_INIT, BPZ_INIT));
+
+		head_smoother_ = getSmoother3D(ALPHA-0.2f, GAMMA);
 	}
 
-	protected void UpdateParam() {
-		if (frame_ctr_++ % 4 != 0) {
-			return;
-		}
-		detect (cap_, dapm_, face_rect_, detected_parts_matrix_);
-//		string str = "part0 = (" + detected_parts_matrix_ [0,0] + ", " + detected_parts_matrix_ [0,1] + ")";
-//		Debug.Log (str);
+	protected void UpdateParam(int[] face_rect, int[,] detected_parts_matrix) {
+//		if (frame_ctr_++ % 4 != 0) {
+//			return;
+//		}
+//		detect (cap_, dapm_, face_rect_, detected_parts_matrix_);
 
 		// 体位置
-		BodyPos = ClipBodyPos(smooth3D(body_smoother_, GetBodyPos(face_rect_)));
-//		BodyPos = smooth3D(body_smoother_, GetBodyPos(face_rect_));
-		Debug.Log ("BodyPos: " + BodyPos);
+		BodyPos = ClipBodyPos(smooth3D(body_smoother_, GetBodyPos(face_rect)));
+//		BodyPos = smooth3D(body_smoother_, GetBodyPos(face_rect));
+//		Debug.Log ("BodyPos: " + BodyPos);
 
 		// 頭角度
-		HeadAng = smooth3D(head_smoother_, GetHeadAng(detected_parts_matrix_));
+		Vector3 hoge = GetHeadAng(detected_parts_matrix);
+		if (!float.IsNaN (hoge.x) && !float.IsNaN (hoge.y) && !float.IsNaN (hoge.z)) {
+			HeadAng = smooth3D (head_smoother_, GetHeadAng (detected_parts_matrix));
+		} else {
+			Debug.Log ("NaN detected");
+		}
+//		HeadAng = GetHeadAng(detected_parts_matrix);
+//		Debug.Log ("HeadAng: " + HeadAng);
 
 		// 視線
-		EyesPos = GetEyesPos(detected_parts_matrix_);
+		EyesPos = GetEyesPos(detected_parts_matrix);
 
 		// 目パチ
 //		float eyeL = FaceExp[FaceExpression.EXPRESSION_EYES_CLOSED_LEFT].intensity;
 //		float eyeR = FaceExp[FaceExpression.EXPRESSION_EYES_CLOSED_RIGHT].intensity;
 //		EyesClose = SmoothEyesClose.SmoothValue(Mathf.Max(eyeL, eyeR));
 //		EyesClose = EyesClose < 50 ? 0 : (EyesClose - 50) * 2;
-		EyesClose = 50;
+		EyesClose = 0;
 
 		// 眉上
 //		float browRaiL = FaceExp[FaceExpression.EXPRESSION_BROW_RAISER_LEFT].intensity;
@@ -163,12 +196,9 @@ public class OCVD : MonoBehaviour {
 //
 //		// べー(口開と競合)
 //		Tongue = SmoothTongue.SmoothValue(FaceExp[FaceExpression.EXPRESSION_TONGUE_OUT].intensity);
-
-		Ready = true;
-
 	}
 
-	void OnDestroy() {
+	virtual protected void OnDestroy() {
 		releaseVideoDevice(cap_);
 		deleteSmoother3D (body_smoother_);
 		deleteSmoother3D (head_smoother_);
@@ -230,7 +260,7 @@ public class OCVD : MonoBehaviour {
 //		float clipped_y = BodyPos.y > -1.2f ? -1.2f : BodyPos.y < -1.4f ? -1.4f : BodyPos.y;
 //		float clipped_z = BodyPos.z > 0.6f ? 0.6f : BodyPos.z < 0.4f ? 0.4f : BodyPos.z;
 //		return new Vector3(BodyPos.x, clipped_y, clipped_z);
-		return new Vector3(BodyPos.x, -1.3f, 0.5f);
+		return new Vector3(BodyPos.x - 0.05f, BPY_INIT, BPZ_INIT);
 	}
 
 	/// <summary>
@@ -240,6 +270,9 @@ public class OCVD : MonoBehaviour {
 	/// <returns>頭角度</returns>
 	Vector3 GetHeadAng(int[,] detected_parts_matrix)
 	{
+		if (detected_parts_matrix.GetLength(0) != NUM_OF_PARTS) {
+			Debug.Log ("detect value in head ang error");
+		}
 		// 頭向きに利用するため顔の中心と左右端、唇下、顎下を取得
 //		Vector2 center = points[29].image;
 //		Vector2 left = points[68].image;
@@ -258,7 +291,7 @@ public class OCVD : MonoBehaviour {
 		float zAng = (Vector2.Distance(mouth, chin) / Vector2.Distance(left, right) - 0.2f) * HeadAngZ;
 
 		// 唇下と顎下の点から角度計算して頭向きに利用
-		return new Vector3(xAng, -yAng, zAng);
+		return new Vector3(xAng, -yAng, zAng - 10);
 	}
 
 	/// <summary>
