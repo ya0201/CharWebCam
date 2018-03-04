@@ -136,31 +136,30 @@ public class OCVD : MonoBehaviour {
 
 
 	protected void Init () {
-//		string model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
-		string model_dat_path;
+		string model_dat_path = "/usr/local/share/charwebcam/shape_predictor_68_face_landmarks.dat";
+		int camera_num = 0;
 
-		int camera_num;
-		if (Application.platform == RuntimePlatform.IPhonePlayer) {
-			Debug.Log ("ios");
-			model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
-			camera_num = 1;
-		} else if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer) {
-			Debug.Log ("osx");
-			model_dat_path = Application.dataPath + "/../../shape_predictor_68_face_landmarks.dat";
-			if (Application.platform == RuntimePlatform.OSXEditor) {
-				model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
-			}
-			camera_num = 0;
-		} else {
-			Debug.Log ("else");
-			model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
-			camera_num = 0;
-		}
-		Debug.Log (camera_num);
+//		if (Application.platform == RuntimePlatform.IPhonePlayer) {
+//			Debug.Log ("ios");
+//			model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
+//			camera_num = 1;
+//		} else if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer) {
+//			Debug.Log ("osx");
+//			model_dat_path = Application.dataPath + "/../../shape_predictor_68_face_landmarks.dat";
+//			if (Application.platform == RuntimePlatform.OSXEditor) {
+//				model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
+//			}
+//			camera_num = 0;
+//		} else {
+//			Debug.Log ("else");
+//			model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
+//			camera_num = 0;
+//		}
+
+//		Debug.Log (camera_num);
 		cap_ = getVideoDevice (camera_num);
 
 		dapm_ = getDetectorAndPoseModel (model_dat_path);
-//		frame_ctr_ = 0;
 		for (int i=0; i<NUM_OF_PARTS; i++) {
 			detected_parts_matrix_[i,0] = detected_parts_matrix_[i,1] = 0;
 		}
