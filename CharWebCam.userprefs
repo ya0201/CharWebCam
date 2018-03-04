@@ -1,10 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 5.2.0.224 (14f2c81)" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CharWebCam/OCVD.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CharWebCam/MM_UnityChan.cs">
     <Files>
-      <File FileName="Assets/CharWebCam/OCVD_UnityChan.cs" Line="1" Column="1" />
-      <File FileName="Assets/PluginTest.cs" Line="1" Column="1" />
-      <File FileName="Assets/CharWebCam/OCVD.cs" Line="142" Column="43" />
+      <File FileName="Assets/CharWebCam/OCVD_UnityChan.cs" Line="36" Column="6" />
+      <File FileName="Assets/CharWebCam/OCVD.cs" Line="234" Column="1" />
+      <File FileName="Assets/CharWebCam/MouthMove.cs" Line="4" Column="14" />
+      <File FileName="Assets/CharWebCam/MM_UnityChan.cs" Line="29" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -1,7 +1,6 @@
 fileFormatVersion: 2
-guid: 64d53f516a8fc42d38c563f103689b00
-folderAsset: yes
-timeCreated: 1516721712
+guid: dd1c4d759c50b4fac947432c4ef67338
+timeCreated: 1516323711
 licenseType: Free
 PluginImporter:
   externalObjects: {}
@@ -12,16 +11,6 @@ PluginImporter:
   isOverridable: 0
   platformData:
   - first:
-      '': OSXIntel
-    second:
-      enabled: 1
-      settings: {}
-  - first:
-      '': OSXIntel64
-    second:
-      enabled: 1
-      settings: {}
-  - first:
       Any: 
     second:
       enabled: 0
@@ -29,11 +18,11 @@ PluginImporter:
   - first:
       Editor: Editor
     second:
-      enabled: 1
+      enabled: 0
       settings:
         DefaultValueInitialized: true
   - first:
-      Standalone: OSXUniversal
+      iPhone: iOS
     second:
       enabled: 1
       settings: {}
