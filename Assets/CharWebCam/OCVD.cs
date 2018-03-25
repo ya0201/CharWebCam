@@ -139,6 +139,7 @@ public class OCVD : MonoBehaviour {
 		string model_dat_path = "/usr/local/share/charwebcam/shape_predictor_68_face_landmarks.dat";
 		int camera_num = 0;
 
+
 //		if (Application.platform == RuntimePlatform.IPhonePlayer) {
 //			Debug.Log ("ios");
 //			model_dat_path = Application.dataPath + "/shape_predictor_68_face_landmarks.dat";
@@ -196,7 +197,7 @@ public class OCVD : MonoBehaviour {
 //		float eyeL = FaceExp[FaceExpression.EXPRESSION_EYES_CLOSED_LEFT].intensity;
 //		float eyeR = FaceExp[FaceExpression.EXPRESSION_EYES_CLOSED_RIGHT].intensity;
 //		EyesClose = SmoothEyesClose.SmoothValue(Mathf.Max(eyeL, eyeR));
-		Debug.Log("GetEyeOpenRatio: " + GetEyeOpenRatio(detected_parts_matrix));
+//		Debug.Log("GetEyeOpenRatio: " + GetEyeOpenRatio(detected_parts_matrix));
 		float eye_close_ratio = 100-GetEyeOpenRatio(detected_parts_matrix);
 //		EyesClose = eye_close_ratio < 50 ? 0 : (eye_close_ratio - 50) * 2;
 		EyesClose = eye_close_ratio < 30 ? eye_close_ratio : 50;
@@ -299,7 +300,7 @@ public class OCVD : MonoBehaviour {
 //		float clipped_y = BodyPos.y > -1.2f ? -1.2f : BodyPos.y < -1.4f ? -1.4f : BodyPos.y;
 //		float clipped_z = BodyPos.z > 0.6f ? 0.6f : BodyPos.z < 0.4f ? 0.4f : BodyPos.z;
 //		return new Vector3(BodyPos.x, clipped_y, clipped_z);
-		return new Vector3(BodyPos.x - 0.05f, BPY_INIT, BPZ_INIT);
+		return new Vector3(BodyPos.x - 0.2f, BPY_INIT, BPZ_INIT);
 	}
 
 	/// <summary>
@@ -365,12 +366,12 @@ public class OCVD : MonoBehaviour {
 		Vector2 lRight = new Vector2(detected_parts_matrix[42,0], detected_parts_matrix[42,1]); //18
 		Vector2 lTop = new Vector2((detected_parts_matrix[43,0] + detected_parts_matrix[44,0]) / 2, 
 			Math.Min(detected_parts_matrix[43,1], detected_parts_matrix[43,1])); //20
-		Debug.Log("lTop: " + lTop);
+//		Debug.Log("lTop: " + lTop);
 		Vector2 lBottom = new Vector2((detected_parts_matrix[46,0] + detected_parts_matrix[47,0]) / 2, 
 			Math.Max(detected_parts_matrix[46,1], detected_parts_matrix[47,1])); //24
-		Debug.Log("lBottom: " + lBottom);
+//		Debug.Log("lBottom: " + lBottom);
 		Vector2 lEye = new Vector2((lLeft.x + lRight.x) / 2, (lTop.y + lBottom.y) / 2); //77
-		Debug.Log("lEye: " + lEye);
+//		Debug.Log("lEye: " + lEye);
 		Vector2 rLeft = new Vector2(detected_parts_matrix[39,0], detected_parts_matrix[39,1]); //10
 		Vector2 rRight = new Vector2(detected_parts_matrix[36,0], detected_parts_matrix[36,1]); //14
 		Vector2 rTop = new Vector2((detected_parts_matrix[37,0] + detected_parts_matrix[38,0]) / 2, 
@@ -381,7 +382,7 @@ public class OCVD : MonoBehaviour {
 
 		// 末尾で調整
 		float tmp1, tmp2;
-		Debug.Log ("gcr: " + GetCenterRatio (lRight, lEye, lLeft));
+//		Debug.Log ("gcr: " + GetCenterRatio (lRight, lEye, lLeft));
 		tmp1 = GetCenterRatio(lRight, lEye, lLeft) * EyesPosX;
 		tmp2 = GetCenterRatio(rRight, rEye, rLeft) * EyesPosX;
 		float xPos = (tmp1 + tmp2) / 2;
