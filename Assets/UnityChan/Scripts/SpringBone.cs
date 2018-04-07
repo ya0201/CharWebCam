@@ -77,6 +77,7 @@ namespace UnityChan
 
 		public void UpdateSpring ()
 		{
+			try{
 			//Kobayashi
 			org = trs;
 			//回転をリセット
@@ -122,6 +123,8 @@ namespace UnityChan
 			//Kobayahsi:Lerp with mixWeight
 			Quaternion secondaryRotation = aimRotation * trs.rotation;
 			trs.rotation = Quaternion.Lerp (org.rotation, secondaryRotation, managerRef.dynamicRatio);
+			}
+			catch{}
 		}
 
 		private void OnDrawGizmos ()

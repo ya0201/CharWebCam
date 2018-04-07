@@ -45,6 +45,8 @@ public class OCVD : MonoBehaviour {
 	protected static extern IntPtr getDetectorAndPoseModel(string model_dat_path);
 	[DllImport ("MyUnityPlugin")]
 	protected static extern void detect(IntPtr cap, IntPtr dapm, int[] face_rect, int[,] matrix);
+	[DllImport ("MyUnityPlugin")]
+	protected static extern void setImgSize(IntPtr cap, int img_size_w, int img_size_h);
 
 	[DllImport ("MySmoother")]
 	protected static extern IntPtr getSmoother1D(float alpha, float gamma);
@@ -85,7 +87,8 @@ public class OCVD : MonoBehaviour {
 	protected float MOUTH_OPEN_RATIO = 50;
 
 	// smoother
-	protected const float ALPHA = 0.5f;
+//	protected const float ALPHA = 0.5f;
+	protected const float ALPHA = 0.05f;
 	protected const float GAMMA = 0.79f;
 	IntPtr body_smoother_;	//3D
 	IntPtr head_smoother_;	//3D
@@ -159,6 +162,7 @@ public class OCVD : MonoBehaviour {
 
 //		Debug.Log (camera_num);
 		cap_ = getVideoDevice (camera_num);
+		setImgSize (cap_, IMAGE_WIDTH/3, IMAGE_HEIGHT/3);
 
 		dapm_ = getDetectorAndPoseModel (model_dat_path);
 		for (int i=0; i<NUM_OF_PARTS; i++) {
@@ -168,7 +172,8 @@ public class OCVD : MonoBehaviour {
 		body_smoother_ = getSmoother3D(ALPHA, GAMMA);
 		LastBodyPos = smooth3D (body_smoother_, new Vector3 (BPX_INIT, BPY_INIT, BPZ_INIT));
 
-		head_smoother_ = getSmoother3D(ALPHA-0.2f, GAMMA);
+//		head_smoother_ = getSmoother3D(ALPHA-0.2f, GAMMA);
+		head_smoother_ = getSmoother3D(ALPHA, GAMMA);
 		LastHeadAng = smooth3D (head_smoother_, new Vector3 (HAX_INIT, HAY_INIT, HAZ_INIT));
 
 		eye_close_smoother_ = getSmoother1D (ALPHA, GAMMA);
@@ -264,8 +269,8 @@ public class OCVD : MonoBehaviour {
 	Vector3 GetBodyPos(int[] face_rect)
 	{
 		// 体位置に利用するため頭位置を取得
-		float xMax = IMAGE_WIDTH;
-		float yMax = IMAGE_HEIGHT;
+		float xMax = 2.0f*IMAGE_WIDTH;
+		float yMax = 2.0f*IMAGE_HEIGHT;
 		float xPos = face_rect[0] + (face_rect[2] / 2);	// x + (w / 2)
 		float yPos = face_rect[1] + (face_rect[3] / 2);	// y + (h / 2)
 		float zPos = (yMax - face_rect[3]);
@@ -300,7 +305,7 @@ public class OCVD : MonoBehaviour {
 //		float clipped_y = BodyPos.y > -1.2f ? -1.2f : BodyPos.y < -1.4f ? -1.4f : BodyPos.y;
 //		float clipped_z = BodyPos.z > 0.6f ? 0.6f : BodyPos.z < 0.4f ? 0.4f : BodyPos.z;
 //		return new Vector3(BodyPos.x, clipped_y, clipped_z);
-		return new Vector3(BodyPos.x - 0.2f, BPY_INIT, BPZ_INIT);
+		return new Vector3(BodyPos.x-0.3f, BPY_INIT, BPZ_INIT);
 	}
 
 	/// <summary>

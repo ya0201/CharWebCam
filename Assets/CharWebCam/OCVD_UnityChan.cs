@@ -13,29 +13,50 @@ public class OCVD_UnityChan : OCVD
     public SkinnedMeshRenderer EL_DEF;
 //    public SkinnedMeshRenderer MTH_DEF;
 
+	private int frame_ctr_;
+
+	// for multi thread detection
 	private Thread detect_thread_;
 	private BlockingCollection<int[]> detected_face_collection_;
 	private BlockingCollection<int[,]> detected_parts_collection_;
-	private int frame_ctr_;
+
+	// for single thread detection
+	int[] detected_face_ = new int[4];
+	int[,] detected_parts_ = new int[NUM_OF_PARTS, 2];
 
     void Start()
     {
         BodyPosYOffset = Body.transform.position.y;
         Init();
 
-		detected_face_collection_ = new BlockingCollection<int[]>(new ConcurrentStack<int[]>());
-		detected_parts_collection_ = new BlockingCollection<int[,]>(new ConcurrentStack<int[,]>());
+		// for multi thread detection
+//		detected_face_collection_ = new BlockingCollection<int[]>(new ConcurrentStack<int[]>());
+//		detected_parts_collection_ = new BlockingCollection<int[,]>(new ConcurrentStack<int[,]>());
+//		detect_thread_ = new Thread(doDetect);
+//		detect_thread_.Start();
 
-		detect_thread_ = new Thread(doDetect);
-		detect_thread_.Start();
+		// for single thread detection
+		for (int i=0; i<NUM_OF_PARTS; i++) {
+			detected_parts_[i,0] = detected_parts_[i,1] = 0;
+		}
+
 
 		frame_ctr_ = 0;
     }
 
     void Update()
     {
-		UpdateParam(detected_face_collection_.Take(), detected_parts_collection_.Take());
-		Debug.Log (detected_parts_collection_.ToString());
+		// for multi thread detection
+//		UpdateParam(detected_face_collection_.Take(), detected_parts_collection_.Take());
+
+		// for single thread detection
+		if (frame_ctr_++ % 3 == 0) {
+//		if (true) {
+			detect (cap_, dapm_, detected_face_, detected_parts_);
+		}
+		UpdateParam (detected_face_, detected_parts_);
+
+//		Debug.Log (detected_parts_collection_.ToString());
 
         // 各パラメータ表示
         UpdateParamText();
