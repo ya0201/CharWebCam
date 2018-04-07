@@ -162,7 +162,7 @@ public class OCVD : MonoBehaviour {
 
 //		Debug.Log (camera_num);
 		cap_ = getVideoDevice (camera_num);
-		setImgSize (cap_, IMAGE_WIDTH/3, IMAGE_HEIGHT/3);
+		setImgSize (cap_, IMAGE_WIDTH/4, IMAGE_HEIGHT/4);
 
 		dapm_ = getDetectorAndPoseModel (model_dat_path);
 		for (int i=0; i<NUM_OF_PARTS; i++) {
