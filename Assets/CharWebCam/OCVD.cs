@@ -87,7 +87,7 @@ public class OCVD : MonoBehaviour {
 	protected float MOUTH_OPEN_RATIO = 50;
 
 	// smoother
-//	protected const float ALPHA = 0.5f;
+//	protected const float ALPHA = 0.3f;
 	protected const float ALPHA = 0.05f;
 	protected const float GAMMA = 0.79f;
 	IntPtr body_smoother_;	//3D
